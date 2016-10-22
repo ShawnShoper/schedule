@@ -1,0 +1,29 @@
+json:
+    elements1:brief-info
+    elements2:item
+    elements:breadcrumb
+document:
+    msg:msg
+    shopInfo:shopInfo
+    shopName:shopName
+    address:address
+    crossRoad:crossRoad
+    phoneNo:phoneNo
+    avgPrice:avgPrice
+    score:score
+    score1:score1
+    score2:score2
+    score3:score3
+    businessHours:businessHours
+    branchName:branchName
+    hits:hits
+    weeklyHits:weeklyHits
+    phoneNo2:phoneNo2
+    power:power
+    groupFlag:groupFlag
+    district:district
+    branchTotal:branchTotal
+    glat:glat
+    glng:glng
+    defaultPic:defaultPic
+

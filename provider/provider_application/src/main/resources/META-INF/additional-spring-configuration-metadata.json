@@ -1,0 +1,107 @@
+{"properties": [
+  {
+    "name": "zookeeper.host",
+    "type": "java.lang.String",
+    "description": "A description for 'zookeeper.host'"
+  },
+  {
+    "name": "application.name",
+    "type": "java.lang.String",
+    "description": "A description for 'application.name'"
+  },
+  {
+    "name": "zookeeper.port",
+    "type": "java.lang.String",
+    "description": "A description for 'zookeeper.port'"
+  },
+  {
+    "name": "zookeeper.timeout",
+    "type": "java.lang.String",
+    "description": "A description for 'zookeeper.timeout'"
+  },
+  {
+    "name": "provider_node.path",
+    "type": "java.lang.String",
+    "description": "A description for 'provider_node.path'"
+  },
+  {
+    "name": "provider_node.port",
+    "type": "java.lang.String",
+    "description": "A description for 'provider_node.port'"
+  },
+  {
+    "name": "provider_node.group",
+    "type": "java.lang.String",
+    "description": "A description for 'provider_node.group'"
+  },
+  {
+    "name": "provider_node.version",
+    "type": "java.lang.String",
+    "description": "A description for 'provider_node.version'"
+  },
+  {
+    "name": "provider_node.timeout",
+    "type": "java.lang.String",
+    "description": "A description for 'provider_node.timeout'"
+  },
+  {
+    "name": "mongo.host",
+    "type": "java.lang.String",
+    "description": "A description for 'mongo.host'"
+  },
+  {
+    "name": "mongo.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mongo.port'"
+  },
+  {
+    "name": "mongo.timeout",
+    "type": "java.lang.String",
+    "description": "A description for 'mongo.timeout'"
+  },
+  {
+    "name": "mongo.path",
+    "type": "java.lang.String",
+    "description": "A description for 'mongo.path'"
+  },
+  {
+    "name": "application.mongo-path",
+    "type": "java.lang.String",
+    "description": "A description for 'application.mongo-path'"
+  },
+  {
+    "name": "master.path",
+    "type": "java.lang.String",
+    "description": "A description for 'master.path'"
+  },
+  {
+    "name": "provider.node-path",
+    "type": "java.lang.String",
+    "description": "A description for 'provider.node-path'"
+  },
+  {
+    "name": "provider.port",
+    "type": "java.lang.String",
+    "description": "A description for 'provider.port'"
+  },
+  {
+    "name": "provider.group",
+    "type": "java.lang.String",
+    "description": "A description for 'provider.group'"
+  },
+  {
+    "name": "provider.version",
+    "type": "java.lang.String",
+    "description": "A description for 'provider.version'"
+  },
+  {
+    "name": "provider.timeout",
+    "type": "java.lang.String",
+    "description": "A description for 'provider.timeout'"
+  },
+  {
+    "name": "master.node-path",
+    "type": "java.lang.String",
+    "description": "A description for 'master.node-path'"
+  }
+]}

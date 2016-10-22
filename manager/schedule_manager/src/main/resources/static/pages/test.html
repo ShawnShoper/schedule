@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script src="js/jquery.min.js"></script>
+    <script>
+        $.ajax({
+            type: "POST",
+            url: "/task/test/",
+            data: JSON.stringify({"a":"b","b":"说的"}),
+            contentType: "application/json"
+
+        });
+
+    </script>
+</head>
+
+</html>

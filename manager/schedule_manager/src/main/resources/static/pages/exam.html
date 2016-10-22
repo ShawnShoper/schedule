@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title></title>
+<script src="js/jquery.min.js"></script>
+<style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.selT {
+	font-size: 16px;
+	padding-top: 10px;
+	font-family: "microsoft yahei";
+}
+
+.selBoth {
+	padding: 10px 0;
+	font-family: "microsoft yahei";
+	color: #333;
+}
+
+.selBoth p {
+	color: #6b6b6b;
+	line-height: 30px;
+	font-size: 14px;
+	margin-top: 10px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.selBoth p span {
+	display: inline-block;
+	vertical-align: top;
+	width: 30px;
+	height: 30px;
+	border: 1px solid #0f92fe;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	text-align: center;
+	line-height: 30px;
+	color: #0f92fe;
+	font-size: 12px;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	margin-right: 10px;
+}
+
+.selBoth p label {
+	vertical-align: top;
+	line-height: 30px;
+}
+
+.selBoth p.active {
+	color: #0f92fe;
+}
+
+.selBoth p.active span {
+	background: url(images/che.png) no-repeat center #0f92fe;
+	background-size: 50% auto;
+	border: none;
+}
+
+.selBoth p.active span b {
+	display: none;
+}
+
+.sub_btn {
+	padding: 0 20px;
+	border: none;
+	background: transparent;
+	height: 28px;
+	margin-top: 10px;
+	border-radius: 4px;
+	color: #fff;
+	background: #0f92fe;
+	font: normal 12px/28px "microsoft yahei";
+	cursor: pointer;
+	cursor: hand;
+}
+
+#ss {
+	font: normal 12px/24px "microsoft yahei";
+	color: #666;
+	padding: 10px 0;
+}
+</style>
+</head>
+<body>
+	<div style="padding: 1rem;">
+		<p class="selT"></p>
+		<div class="selBoth">
+			<p data-value="2">
+				<span><b>A</b></span><label>贬义词</label>
+			</p>
+			<p data-value="0">
+				<span><b>B</b></span><label>褒义词</label>
+			</p>
+			<p data-value="1">
+				<span><b>C</b></span><label>中性词</label>
+			</p>
+			<p data-value="3">
+				<span><b>D</b></span><label>不是</label>
+			</p>
+		</div>
+
+		<p id="ss">
+			还剩余<span></span>条
+		</p>
+
+
+		<input name="charact" type="hidden" id="charact" value="-1" /> <input
+			type="button" class="sub_btn" id="subbtn" value="提交" /> <input
+			type="button" class="sub_btn" id="tgbtn" value="跳过" />
+	</div>
+	<script>
+		$(document).ready(function(e) {
+			$(".selBoth p").click(function(e) {
+				$(this).addClass("active").siblings("p").removeClass("active");
+				$("#charact").val($(this).attr("data-value"));
+			});
+			setInterval(hi, 3000)
+			function hi(){
+				$.ajax({
+					type : "GET",
+					url : "/consensus/remain",
+					success : function(msg) {
+						var tit = msg.data;
+						$("#ss span").html(tit);
+					}
+				})
+			}
+			
+
+			$.ajax({
+				type : "PUT",
+				url : "/consensus/random",
+				data : "word=",
+				success : function(msg) {
+					var tit = msg.data;
+					$(".selT").html(tit);
+				}
+			});
+
+			$("#subbtn").click(function(e) {
+				var dvalue = $("#charact").val();
+				var dkey = $(".selT").html();
+				$.ajax({
+					type : "POST",
+					url : "/consensus/submit",
+					data : "charact=" + dvalue + "&key=" + dkey,
+					success : function(msg) {
+						$("#charact").val(-1);
+						$(".selBoth p").removeClass("active");
+						$.ajax({
+							type : "PUT",
+							url : "/consensus/random",
+							success : function(msg) {
+								var tit = msg.data;
+								$(".selT").html(tit);
+							}
+						});
+
+					},
+					error : function(msg) {
+						alert(msg.responseJSON.message);
+					}
+
+				});
+			});
+
+			$("#tgbtn").click(function(e) {
+				var dkey = $(".selT").html();
+				$.ajax({
+					type : "PUT",
+					url : "/consensus/random",
+					data : "word=" + dkey,
+					success : function(msg) {
+						$("#charact").val(-1);
+						$(".selBoth p").removeClass("active");
+						var tit = msg.data;
+						$(".selT").html(tit);
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

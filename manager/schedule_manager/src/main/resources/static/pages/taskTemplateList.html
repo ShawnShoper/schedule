@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title></title>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/tableExport.js"></script>
+<script src="js/jquery.base64.js"></script>
+<script src="js/bootstrap-table.js"></script>
+<script src="js/bootstrap-table-export.js"></script>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/bootstrap-table.min.css">
+<link href="../bootstrap/plugins/bootstrap-toggle/bootstrap-toggle.min.css" rel="stylesheet">
+<link href="../bootstrap/css/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+<script src="../bootstrap/plugins/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="../bootstrap/plugins/validator/bootstrapValidator.min.js"></script>
+<script type="text/javascript" src="../bootstrap/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+<link rel="stylesheet" href="../bootstrap/plugins/validator/bootstrapValidator.min.css"/>
+</head>
+<body>
+	<script type="text/javascript">
+	$(function(){
+		var $table = $('#table');
+		$(function () {
+		  	$table.on('click-row.bs.table', function (e, row, $element) {
+		    		$('.success').removeClass('success');
+		    		$($element).addClass('success');
+		  	});
+		    $('#button').click(function () {
+		    		alert('Selected name: ' + getSelectedRow().name);
+		    });
+		});
+		
+		
+
+	})
+		
+</script>
+    <!-- 添加 修改 modal begin-->
+	<div class="modal fade" id="addTask" tabindex="-1" role="dialog" 
+		   aria-labelledby="myModalLabel" aria-hidden="true">
+		   <div class="modal-dialog">
+		      <div class="modal-content">
+		         <div class="modal-header">
+		            <button type="button" class="close" 
+		               data-dismiss="modal" aria-hidden="true">
+		                  &times;
+		            </button>
+		            <h4 class="modal-title" id="myModalLabel">新增任务模版</h4>
+		         </div>
+		         <div class="modal-body">
+		           <form role="form" id="addTaskForm"  class="form-horizontal">
+			         <div class="form-group">
+				          <label for="template" class="col-sm-2 control-label">任务模版 ID</label>
+				          <div class="col-sm-10">
+				          	<input class="form-control" name="templateID" placeholder="请输入任务模版ID" value="id123456"/>
+				          </div>
+					 </div>
+					 <div class="form-group">
+					      <label for="name" class="col-sm-2 control-label">名称</label>
+					      <div class="col-sm-10">
+					      	<input type="text" class="form-control" name="name"
+					         placeholder="请输入名称">
+					      </div>
+					 </div>
+					 <div class="form-group">
+				          <label for="url" class="col-sm-2 control-label">链接地址</label>
+				          <div class="col-sm-10">
+					      	<input type="text" class="form-control" name="url" 
+					         placeholder="请输入链接地址">
+					      </div>
+			         </div>
+				     <div class="form-group">
+				          <label for="cookies" class="col-sm-2 control-label">cookies</label>
+				          <div class="col-sm-10">
+					      	<input type="text" class="form-control" name="cookies" 
+					         placeholder="请输入域cookies">
+					      </div>
+			         </div>
+				     <div class="form-group">
+					     <label for="cookies" class="col-sm-2 control-label">任务参数</label>
+					     <div class="col-sm-10">
+						     <input type="text" class="form-control" name="params" placeholder="任务参数">
+						 </div>
+				     </div>
+			         <div class="form-group">
+						<label for="timing" class="col-sm-2 control-label">定时任务</label>
+						<div class="col-sm-10" id="timing">
+							 <label class="radio-inline"><input type="radio" name="timing" value="是" checked>是</label>
+							 <label class="radio-inline"><input type="radio" name="timing" value="否">否</label>
+						</div>
+					 </div>
+					 <div class="taskcs">
+				          <div class="form-group">
+					          <label for="cookies" class="col-sm-2 control-label">cron表达式</label>
+					          <div class="col-sm-10">
+						      	<input type="text" class="form-control" name="cronexp" 
+						         placeholder="cron表达式,不填则非定时任务。">
+						      </div>
+				         </div>
+			         </div>
+					</form>
+		         </div>
+		         <div class="modal-footer">
+		            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		            <button type="button" id="addsubmit" class="btn btn-primary">提交</button>
+		         </div>
+		         <script type="text/javascript">
+
+		         	$(document).ready(function() {
+
+						 
+		         		/*关闭时清空*/
+		         		 $('#addTask').on('hide.bs.modal', function () {
+		          
+		         			document.getElementById("addTaskForm").reset(); 
+		         		 }); 
+		         		      
+		    			$('#addTaskForm').bootstrapValidator({
+//		    		        live: 'disabled',
+		    		        message: 'This value is not valid',
+		    		        feedbackIcons: {
+		    		            valid: 'glyphicon glyphicon-ok',
+		    		            invalid: 'glyphicon glyphicon-remove',
+		    		            validating: 'glyphicon glyphicon-refresh'
+		    		        },
+		    		        fields: {
+		    		        	name: {
+		    		                validators: {
+		    		                	notEmpty: {
+		    		                        message: '名称不能为空'
+		    		                    }
+		    		                }
+		    		            },
+		    		            url: {
+		    		                validators: {
+		    		                	notEmpty: {
+		    		                        message: '链接不能为空'
+		    		                    }
+		    		                }
+		    		            },
+		    		            templateID: {
+		    		                validators: {
+		    		                	notEmpty: {
+		    		                        message: 'CRON不能为空'
+		    		                    }
+		    		                }
+		    		            }
+		    		        }
+		    			
+		    			})
+		    		});
+         			 
+		         </script>
+		      </div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+		</div>
+	<!-- 添加 修改 modal end-->
+	<!-- 添加修改 modal begin-->
+	<div class="modal fade" id="addTemplate" tabindex="-1" role="dialog" 
+		   aria-labelledby="myModalLabel" aria-hidden="true">
+		   <div class="modal-dialog">
+		      <div class="modal-content">
+		         <div class="modal-header">
+		            <button type="button" class="close" 
+		               data-dismiss="modal" aria-hidden="true">
+		                  &times;
+		            </button>
+		            <h4 class="modal-title" id="myModalLabel2">
+		               新增任务模版
+		            </h4>
+		         </div>
+		         <div class="modal-body">
+		            <form role="form" id="addForm">
+					   <div class="form-group">
+					      <label for="name">名称</label>
+					      <input type="text" class="form-control" name="name"
+					         placeholder="请输入名称">
+					   </div>
+					   <div class="form-group">
+				          <label for="url">链接地址</label>
+					      <input type="text" class="form-control" name="url" 
+					         placeholder="请输入链接地址">
+			          </div>
+				       <div class="form-group">
+				          <label for="cookies">全局Cookies</label>
+					      <input type="text" class="form-control" name="cookies" 
+					         placeholder="请输入域cookies">
+			         </div>
+					   <div class="form-group">
+				          <label for="template">模版内容</label>
+				          <textarea class="form-control" name="template" placeholder="请输入模版内容" rows="3"></textarea>
+					   </div>
+					<input type="reset"  id="resetIpt" style="display:none;"/>
+					</form>
+		         </div>
+		         <div class="modal-footer">
+		            <button type="button" class="btn btn-default" 
+		               data-dismiss="modal">关闭
+		            </button>
+		            <button type="button" id="addsubmitTask" class="btn btn-primary">提交</button>
+		            
+		         </div>
+		         <script type="text/javascript">
+			         
+		         	$(function(){
+		         		var $table = $('#table');
+		         		function getSelectedRow() {
+						    var index = $table.find('tr.success').data('index');
+						    return $table.bootstrapTable('getData')[index];
+						}
+		         		$('#tt_delete').click(function(){
+			     	 		var row = getSelectedRow()
+			     	 		if(row){
+			     	 			$("#divLoadingdialog .modal-body").html("确定删除【"+row.name+"】吗?");
+			     	 			$("#delConfirm").show();
+			     	 			$("#divLoadingdialog").draggable({
+			                        handle: ".modal-header" 
+			                    }).modal();
+			     	 		}else{
+			     	 			$("#divLoadingdialog .modal-body").html("请选中一条记录操作...");
+			     	 			$("#delConfirm").hide();
+			     	 			$("#divLoadingdialog").draggable({
+			                        handle: ".modal-header" 
+			                    }).modal();
+			     	 		}
+			     	 		 
+		     	 		 })	;
+		         		$("#delConfirm").click(function(){
+		    		 		var row = getSelectedRow();
+		    		 		$.ajax({
+		    					   type: "DELETE",
+		    					   url: "/task/deleteTaskTemp/"+row.id,
+		    					   success: function(msg){
+		    					   	if(msg.code === 0){
+		    					   		$("#divLoadingdialog .modal-body").html("删除任务:【"+row.name+"】成功...");
+		    		     	 			$("#delConfirm").hide();
+		    		     	 			$("#divLoadingdialog").draggable({
+		    		                        handle: ".modal-header" 
+		    		                    }).modal(); 
+		          		 				$("button[name='refresh']").click()
+		    					   }},
+		    					   error:function(msg){
+		    						   $("#divLoadingdialog .modal-body").html("删除数据失败,错误信息:"+msg.responseJSON.message);
+		    						    $("#delConfirm").hide();
+		    		     	 			$("#divLoadingdialog").draggable({
+		    		                        handle: ".modal-header" 
+		    		                    }).modal();  
+		    		     	 		 
+		    					   }
+		    				 });
+		    		 		
+		    		 	});
+		         		/*S 任务模版头部按钮点击事件*/
+		         		$("#toolbar1 .addTaskT").click(function(){
+		       			 
+		    				var row=getSelectedRow();
+		    				if($(this).children("i").hasClass("glyphicon-plus")){
+							 
+								$("#resetIpt").click();
+								$("textarea[name='template']").val('');
+		    					$("#addsubmitTask").attr("isAdd","1");
+		    		 			$("#myModalLabel2").html("新增任务模块");
+		    					$("#addTemplate").draggable({
+		                         handle: ".modal-header" 
+		                     }).modal();
+		    				}else{
+		    					if(row){
+		    	 		 			$("#myModalLabel2").html("编辑任务模块");
+		    						$("#addTemplate").draggable({
+		    	                        handle: ".modal-header" 
+		    	                    }).modal(); 
+		    						$.get("/task/getTaskTemplate/"+row.id,function(data){
+		    							console.log(data.data);
+		    							$("#addTemplate input[name='name']").val(data.data.name);  
+		    							$("#addTemplate input[name='url']").val(data.data.url); 
+		    							$("#addTemplate input[name='cookies']").val(data.data.cookies);  
+		    							$("#addTemplate textarea[name='template']").html(data.data.code); 
+		    						});
+		    						$("#addsubmitTask").attr("isAdd","0");
+		    					}else{
+		    						$("#divLoadingdialog .modal-body").html("请选中一条记录操作..."); 
+		    						$("#delConfirm").hide();
+		    	     	 			$("#divLoadingdialog").draggable({
+		    	                        handle: ".modal-header" 
+		    	                    }).modal();
+		    					}
+		    				}
+		    			});
+		         		/*E 任务模版头部按钮点击事件*/
+		         	/*S 任务模版头部弹出层点击确认事件*/
+		    		 $('#addsubmitTask').click(function() {
+		      	 		var row = getSelectedRow();
+		    				$('#addTaskForm').bootstrapValidator('validate');
+		    				if($('#addTaskForm').data('bootstrapValidator').isValid()){
+		    					//验证成功...
+		    					if($(this).attr("isAdd")==1){ ;
+		    					 
+		    						$.ajax({
+		    	   					   type: "POST",
+		    	   					   url: "/task/addTaskTemplate",
+		    	   					   data: $('#addForm').serialize(),
+		    						   success: function(msg){
+		    						   	if(msg.code === 0){
+		    		         		 		$("#addTemplate").modal("hide")
+		    		         		 		$('#addTaskForm')[0].reset()
+		    		         		 		$('#addTaskForm').data('bootstrapValidator').resetForm()
+		    		         		 		$("button[name='refresh']").click();
+		    		         		 		
+		    						   	}
+		    						   },
+		    						   error:function(msg){
+		    							   $("#divLoadingdialog .modal-body").html("请求失败,错误信息:"+msg.responseJSON.message);
+		    							    $("#delConfirm").hide();
+		    			     	 			$("#divLoadingdialog").draggable({
+		    			                        handle: ".modal-header" 
+		    			                    }).modal();   
+		    						   }
+		    						});
+		    					}else{
+
+		    						$.ajax({
+		    							   type: "PUT",
+		    							   url: "/task/editTaskTemplate/"+row.id ,
+		    							   data: $('#addForm').serialize(),
+		    							   success: function(msg){
+		    							   	if(msg.code === 0){
+		    			         		 		$("#addTemplate").modal("hide")
+		    			         		 		$('#addTaskForm')[0].reset()
+		    			         		 		$('#addTaskForm').data('bootstrapValidator').resetForm()
+		    			         		 		$("button[name='refresh']").click();
+		    							   	}
+		    							   },
+		    							   error:function(msg){
+		    								   $("#divLoadingdialog .modal-body").html("请求失败,错误信息:"+msg.responseJSON.message);
+		    								    $("#delConfirm").hide();
+		    				     	 			$("#divLoadingdialog").draggable({
+		    				                        handle: ".modal-header" 
+		    				                    }).modal();   
+		    							   }
+		    							});
+		    					}
+		    				}else{
+		    					//验证失败...do nothing
+		    				}
+		    			});
+
+			         	/* 任务模版头部弹出层点击确认事件*/
+		         	/*S 任务模版子任务添加*/ 
+         			 $('#addsubmit').click(function() {
+         				$('#addForm').bootstrapValidator('validate');
+   						if($('#addForm').data('bootstrapValidator').isValid()){
+   							//验证成功...
+   							$.ajax({
+   							   type: "POST",
+   							   url: "/task/addTask",
+   							   data: $('#addTaskForm').serialize(),
+   							   success: function(msg){
+ 							   	if(msg.code === 0){
+			         		 		$("#addTask").modal("hide");
+			         		 		$('#addForm')[0].reset();
+			         		 		$('#addForm').data('bootstrapValidator').resetForm();
+			         		 		$("button[name='refresh']").click();
+ 							   	}
+   							   },
+   							   error:function(msg){
+   							   		alert("请求失败,错误信息:"+msg.responseJSON.message)
+   							   }
+   							});
+   						}else{
+   							//验证失败...do nothing
+   						}
+					 });
+ 		         	/*E 任务模版子任务添加*/ 
+		    			$('#addForm').bootstrapValidator({
+//		    		        live: 'disabled',
+		    		        message: 'This value is not valid',
+		    		        feedbackIcons: {
+		    		            valid: 'glyphicon glyphicon-ok',
+		    		            invalid: 'glyphicon glyphicon-remove',
+		    		            validating: 'glyphicon glyphicon-refresh'
+		    		        },
+		    		        fields: {
+		    		        	name: {
+		    		                validators: {
+		    		                	notEmpty: {
+		    		                        message: '名称不能为空'
+		    		                    }
+		    		                }
+		    		            },
+		    		            template: {
+		    		                validators: {
+		    		                	notEmpty: {
+		    		                        message: '模版不能为空'
+		    		                    }
+		    		                }
+		    		            }
+		    		        }
+		    			
+		    			})
+		    		});
+		         </script>
+		      </div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+		</div>
+	<!-- 添加修改 modal end-->
+
+	<div id="toolbar1" class="btn-group">
+		<button id="tt_add" type="button" data-toggle="modal" class="btn btn-default addTaskT">
+			<i class="glyphicon glyphicon-plus"></i>
+		</button>
+		<button id="tt_edit" type="button" class="btn btn-default addTaskT">
+			<i class="glyphicon glyphicon-edit"></i>
+		</button>
+		<button id="tt_delete" type="button" class="btn btn-default">
+			<i class="glyphicon glyphicon-trash"></i>
+		</button>
+	</div>
+	<script type="text/javascript">
+		/* $(function(){
+			$("#tt_add").click(function(){
+				alert(1)
+			})
+		}) */
+	</script>
+	<table id="table" data-toggle="table" data-url="/task/getTaskTemp" 	data-pagination="true"  data-side-pagination="server" data-search="true" data-show-refresh="true" data-show-columns="true"  data-sort-name="createTime" data-sort-order="desc" data-toolbar="#toolbar1">
+		<thead>
+			<tr>
+				<th data-field="id" data-align="center">ID</th>
+				<th data-field="name" data-align="center">名称</th>
+				<th data-field="createTime" data-align="center" data-sortable="true">创建时间</th>
+				<th data-field="url" data-align="center">URL</th>
+				<th data-field="addHandle"  data-align="center">任务操作</th>
+				<th data-field="enabledTask" data-align="center">是否启用</th>
+			</tr>
+		</thead>
+	</table>
+	<div class="alert alert-success" id="eventsResult">
+	    Here is the result of event.
+	</div>
+			<div class="modal fade" id="divLoadingdialog" tabindex="-1" role="dialog" 
+		   aria-labelledby="myModalLabel" aria-hidden="true">
+	 
+			<div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">温馨提示</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p> One fine body&hellip;</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+		        <button type="button" id="delConfirm" class="btn btn-primary">确定</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+	</div>
+	<script type="text/javascript">
+	 $(function(){
+			var $table = $('#table');
+		 function getSelectedRow() {
+			    var index = $table.find('tr.success').data('index');
+			    return $table.bootstrapTable('getData')[index];
+			}
+		 var $result = $('#eventsResult');
+		 
+			 /*编辑添加*/
+			$("#table").on("click",".addTask",function(){ 
+				var row=getSelectedRow();  
+		 		$("#myModalLabel").html("新增任务模块");
+					$("#addTask").draggable({
+                     handle: ".modal-header" 
+               	}).modal();  
+	            $("#addTask input[name='templateID']").val(row.id);
+	     
+				 
+			}); 
+			$("#table").on("click",".isStart",function(){ 
+				var row=getSelectedRow();  
+				var isVal=true;
+				if(!$(this).hasClass("qidong")){
+					isVal=false;
+				} 
+				$.ajax({
+					   type: "put",
+					   url: "/task/inverseStatus",
+					   data:{id:row.id,value:isVal,type:0},
+					   success: function(msg){
+					   	if(msg.code === 0){ 
+	         		 		$("button[name='refresh']").click();
+					   	}
+					   },
+					   error:function(msg){
+						   $("#divLoadingdialog .modal-body").html("请求失败,错误信息:"+msg.responseJSON.message);
+						    $("#delConfirm").hide();
+		     	 			$("#divLoadingdialog").draggable({
+		                        handle: ".modal-header" 
+		                    }).modal();   
+					   }
+					});
+			
+			}); 
+		 
+		 $('#table').on('all.bs.table', function (e, name, args) {
+		       
+		    })
+		    .on('click-row.bs.table', function (e, row, $element) {
+		        $result.text('Event: click-row.bs.table');
+		    })
+		    .on('dbl-click-row.bs.table', function (e, row, $element) {
+		        $result.text('Event: dbl-click-row.bs.table');
+		    })
+		    .on('sort.bs.table', function (e, name, order) {
+		        $result.text('Event: sort.bs.table');
+		    })
+		    .on('check.bs.table', function (e, row) {
+		        $result.text('Event: check.bs.table');
+		    })
+		    .on('uncheck.bs.table', function (e, row) {
+		        $result.text('Event: uncheck.bs.table');
+		    })
+		    .on('check-all.bs.table', function (e) {
+		        $result.text('Event: check-all.bs.table');
+		    })
+		    .on('uncheck-all.bs.table', function (e) {
+		        $result.text('Event: uncheck-all.bs.table');
+		    })
+		    .on('load-success.bs.table', function (e, data) {
+		     //后台生成的 checkbox。是懒加载的，因此需要通过 table load success 事件来重新加载一次后面生成的toggle..
+		    	var toggles = $(".disable_checkbox");
+		     	for(var i=0;i<toggles.length;i++){
+			    	 $(toggles[i]).bootstrapToggle()
+			    	 $(toggles[i]).change(function(){
+			    		 //Do some thing...
+		    		 //alert($(this).prop('checked')+"-"+$(this).attr("cust-id"))
+		    		 })
+		    	 /*  toggles[i].bootstrapToggle().change(checkToggle());*/ 
+		    	 }
+		     $result.text('Event: load-success.bs.table');
+		    })
+		    .on('load-error.bs.table', function (e, status) {
+		        $result.text('Event: load-error.bs.table');
+		    })
+		    .on('column-switch.bs.table', function (e, field, checked) {
+		        $result.text('Event: column-switch.bs.table');
+		    })
+		    .on('page-change.bs.table', function (e, number, size) {
+		        $result.text('Event: page-change.bs.table');
+		    })
+		    .on('search.bs.table', function (e, text) {
+		        $result.text('Event: search.bs.table');
+		    });
+	 })
+	 
+	</script>
+</body>
+</html>

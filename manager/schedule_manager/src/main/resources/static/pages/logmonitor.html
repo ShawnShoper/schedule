@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/sockjs-0.3.4.min.js"></script>
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-table.min.css"></head>
+<body>
+<style type="text/css">
+	.fz10{
+		font-size:10px;
+	}
+</style>
+	<div>
+		<table id="logpanel" style="width:100%;height:100%;"></table>
+	</div>
+	<script type="text/javascript">
+	$(function(){
+		$.ajax({
+		   type: "GET",
+		   url: "/sysConf/getWSAddr",
+		   success: function(msg){
+		   	if(msg.code === 0){
+	 			init(msg.data)
+		   }},
+		   error:function(msg){
+		   		alert("获取系统配置失败,错误信息:"+msg.responseJSON.message)
+		   }
+		});
+		function init(addr){
+			var websocket = null
+			if ('WebSocket' in window) {
+				websocket = new WebSocket("ws://"+addr+"/webSocketServer")
+			} 
+			else if ('MozWebSocket' in window) {
+				websocket = new MozWebSocket("ws://"+addr+"/webSocketServer")
+			} 
+			else {
+				websocket = new SockJS("http://"+addr+"/sockjs/webSocketServer")
+			}
+			websocket.onopen = onOpen
+			websocket.onmessage = onMessage
+			websocket.onerror = onError
+			websocket.onclose = onClose
+		}
+				
+		function onOpen(openEvt) {
+			console.log("Connection success");
+			var td = $("<td>").html("<pre class='fz10'>Connection success.Target server is "+server+"</pre>")
+			var tr = $("<tr>").append(td)
+			$("#logpanel").prepend(tr)
+		}
+		
+		function onMessage(evt) {
+			var td = $("<td>").html("<pre class='fz10'>"+evt.data+"</pre>")
+			var tr = $("<tr>").append(td)
+			$("#logpanel").prepend(tr)
+			//check table child size...
+			var tbody = $("#logpanel:first-child").children()[0]
+			 if(tbody.childNodes.length>100){
+			 	tbody.removeChild(tbody.childNodes[100])
+			 }
+
+		}
+		function onError(evt) {
+			console.log("Connection error")
+		}
+		function onClose(evt) {
+			console.log("Connection close")
+		}
+		
+		function doSend(evt) {
+			if (websocket.readyState == websocket.OPEN) {  		
+	            var msg = document.getElementById("inputMsg").value;  
+	            websocket.send(msg);//调用后台handleTextMessage方法
+	            console.log("发送成功!");  
+	        } else {
+	        	console.log("连接失败!");  
+	        }
+		}
+	});
+	</script>
+</body>
+</html>

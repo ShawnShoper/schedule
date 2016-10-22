@@ -1,0 +1,52 @@
+server:
+       port: 8088
+#spring:
+ #     jackson:
+
+  #          date-format:  yyyyMMdd
+zookeeper:
+    #host: 192.168.0.200
+    host: 127.0.0.1
+    port: 2181
+    timeout:  20000
+hdfs:
+    nodePath: /org/config/hdfs
+    #nodePath: /org/shoper/schedule/config/hdfs
+
+application:
+    name: schedule_server
+    heartBeat:  5000
+    timeout:  5
+    port: 8887
+    taskGenerateInterval: 1
+    generateIntervalUnit: HOURS
+    bindAddr: 192.168.2.238
+provider:
+    nodePath: /org/provider
+    #nodePath: /org/shoper/schedule/provider
+master:
+    nodePath: /org/master/um
+    #nodePath: /org/shoper/schedule/master/um
+mail:
+    nodePath: /org/config/mail
+    #nodePath: /org/shoper/schedule/config/mail
+    
+spring:
+      data:
+          mongodb:
+                host: 192.168.100.45
+                port: 27017
+                database: daq
+      redis:
+            database: 1 # database name
+            host: 192.168.100.45 # server host
+            password: daqsoft # server password
+            port: 6379 # connection port
+            pool:max-idle: 8 # pool settings :::
+            pool:min-idle:  0
+            pool:max-active:  8
+            pool:max-wait:  -1
+            #sentinel:
+           #         master : # name of Redis server
+           # sentinel:
+            #        nodes : # comma-separated list of host:port pairs

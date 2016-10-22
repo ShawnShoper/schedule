@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="css/bootstrap-table.min.css">
+</head>
+<body>
+<div class="container">
+<!-- cluster info-->
+    <table id="table"
+           data-toggle="table"
+           data-url="cluster/getInfo"
+           data-pagination="true"
+           data-show-toggle="true"
+       	   data-side-pagination="server"
+       	   data-page-list="[5, 10, 20, 50, 100, 200]"
+       	   data-search="true"
+       	   data-show-refresh="true"
+       	   data-show-columns="true"
+       	   data-height="500">
+        <thead>
+        <tr>
+            <th data-field="id" data-align="center">ID</th>
+            <th data-field="name" data-align="center">名称</th>
+            <th data-field="address" data-align="center">地址</th>
+            <th data-field="group" data-align="center">所属组</th>
+            <th data-field="version" data-align="center">版本</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!--<script src="assets/bootstrap2.3/js/bootstrap.min.js"></script>-->
+<script src="js/tableExport.js"></script>
+<script src="js/jquery.base64.js"></script>
+<script src="js/bootstrap-table.js"></script>
+<script src="js/bootstrap-table-export.js"></script>
+</body>
+</html>
