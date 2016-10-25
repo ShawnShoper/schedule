@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @sice
  */
 @Component
-public class HashNodeRing {
+public class HashNodeRingSelector {
     /**
      * 所有Connector 集合处,一个 hash环, key为筛选条件 hash.value为 hash环
      */
@@ -29,9 +29,8 @@ public class HashNodeRing {
      */
     public void addNode(Connector connector) {
         long hashKey = computeRootNodeHashKey(connector);
-        if (!nodes.containsKey(hashKey)) {
+        if (!nodes.containsKey(hashKey))
             nodes.put(hashKey, new TreeMap<>());
-        }
         TreeMap<Long, Connector> treeMap = nodes.get(hashKey);
         URL url = connector.getUrl();
         for (int i = 0; i < VIRTUALNODES; i++)
@@ -61,23 +60,23 @@ public class HashNodeRing {
      * @param treeMap
      * @return Selector
      */
-    private Selector select(TreeMap<Long, Connector> treeMap) {
+    private SelectorResult select(TreeMap<Long, Connector> treeMap) {
         if (treeMap.isEmpty())
             return null;
         SortedMap<Long, Connector> tailMap = treeMap.tailMap(ConsistencyHash.hash("" + ran.nextInt(VIRTUALNODES)));
         long key = tailMap.isEmpty() ? treeMap.firstKey() : tailMap.firstKey();
         Connector connector = treeMap.get(key);
-        Selector selector = new Selector();
-        selector.setConnector(connector);
+        SelectorResult selectorResult = new SelectorResult();
+        selectorResult.setConnector(connector);
 //        Collection<Connector> temp = new ArrayList<>();
 //        temp.addAll(treeMap.values());
 //        treeMap.values().forEach(temp::addAll);
 //        temp.remove(connector);
 //        Collection<Connector> copy = ObjectUtil.depthClone(connectors, Collection.class);
 //        tre.remove(connector);
-        selector.setConnectors(treeMap.values());
-        selector.setConnector(connector);
-        return selector;
+        selectorResult.setConnectors(treeMap.values());
+        selectorResult.setConnector(connector);
+        return selectorResult;
     }
 
     /**
@@ -93,9 +92,9 @@ public class HashNodeRing {
      * @param name
      * @return
      */
-    public Selector select(String group, String version, String name) {
+    public SelectorResult select(String group, String version, String name) {
         Long hashKey = computeRootNodeHashKey(group, version, name);
-        Selector selector = null;
+        SelectorResult selector = null;
         if (nodes.containsKey(hashKey)) {
             TreeMap treeMap = nodes.get(hashKey);
             if (!treeMap.isEmpty())

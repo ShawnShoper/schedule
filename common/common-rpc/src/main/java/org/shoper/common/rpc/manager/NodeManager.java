@@ -6,8 +6,8 @@ import org.apache.zookeeper.KeeperException;
 import org.shoper.common.rpc.common.URL;
 import org.shoper.common.rpc.common.URLBuilder;
 import org.shoper.common.rpc.connector.Connector;
-import org.shoper.common.rpc.manager.selector.HashNodeRing;
-import org.shoper.common.rpc.manager.selector.Selector;
+import org.shoper.common.rpc.manager.selector.HashNodeRingSelector;
+import org.shoper.common.rpc.manager.selector.SelectorResult;
 import org.shoper.commons.MD5Util;
 import org.shoper.commons.StringUtil;
 import org.shoper.concurrent.future.AsynRunnable;
@@ -29,6 +29,7 @@ import javax.annotation.PreDestroy;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static org.shoper.schedule.Constant.DEFAULT_GROUP;
@@ -41,10 +42,8 @@ import static org.shoper.schedule.Constant.DEFAULT_GROUP;
  */
 @Component
 public class NodeManager extends ZKModule {
-    //	@Autowired
-//	LogModule logModule;
     @Autowired
-    HashNodeRing hashNodeRing;
+    HashNodeRingSelector hashNodeRing;
     static Logger logger = LoggerFactory.getLogger(NodeManager.class);
     @Autowired
     ProviderInfo providerInfo;
@@ -59,7 +58,7 @@ public class NodeManager extends ZKModule {
      * Choose the highest priority Connectors<br>
      * Details please see ThriftConnector method {@code compareTo}
      */
-    //private volatile Map<String, PriorityBlockingQueue<Connector>> connectors = new ConcurrentHashMap<>();
+    private volatile Map<String, PriorityBlockingQueue<Connector>> connectors = new ConcurrentHashMap<>();
     public volatile boolean isWaitting;
 
     Timer timer;
@@ -233,34 +232,56 @@ public class NodeManager extends ZKModule {
         String group = StringUtil.isEmpty(url.getGroup()) ? DEFAULT_GROUP : url.getGroup();
         String token = MD5Util.GetMD5Code(url.getID());
         url.setToken(token);
+//        if (!connections.containsKey(group))
+//            connections.put(group, new ConcurrentHashMap<>());
+//        ConcurrentHashMap<String, Connector> connectors = connections.get(group);
+//        if (connectors.containsKey(token)) {
+//            logger.info("Update provider [{}]", url);
+//            Connector tc = connectors.get(token);
+//            if (!tc.isCheckHeartbeatByRegistry())
+//                tc.setCheckHeartbeatByRegistry(true);
+//            if (tc.isDisabled())
+//                tc.enabled();
+//
+//        } else {
+//            //如果不存在那么新增
+//            Connector connector = Connector.buider(url);
+//            connectors.put(token, connector);
+//            hashNodeRing.addNode(connector);
+//        }
         if (!connections.containsKey(group))
             connections.put(group, new ConcurrentHashMap<>());
-        ConcurrentHashMap<String, Connector> connectors = connections.get(group);
-        if (connectors.containsKey(token)) {
-            logger.info("Update provider [{}]", url);
-            Connector tc = connectors.get(token);
+        if (!connectors.containsKey(group))
+            connectors.put(group, new PriorityBlockingQueue<>());
+        PriorityBlockingQueue<Connector> pbqs = connectors.get(group);
+        Map<String, Connector> ctrs = connections.get(group);
+        if (!ctrs.containsKey(token)) {
+            logger.info(
+                    "Increased provider [" + url + "]"
+            );
+            Connector thriftConnector = Connector.buider(url);
+            ctrs.put(token, thriftConnector);
+
+            if (!pbqs.offer(thriftConnector, 1, TimeUnit.SECONDS)) {
+                logger.warn(
+                        "Offer connector failed ,the queue is full..."
+                );
+            }
+        } else {
+            logger.info(
+                    "Update provider [" + url + "]"
+            );
+            Connector tc = ctrs.get(token);
             if (!tc.isCheckHeartbeatByRegistry())
                 tc.setCheckHeartbeatByRegistry(true);
             if (tc.isDisabled())
-                tc.enabled();
-
-        } else {
-            //如果不存在那么新增
-            Connector connector = Connector.buider(url);
-            connectors.put(token, connector);
-            //新增到 connectors里
-            String hashKey = url.getGroup() + url.getVersion() + url.getClusterName();
+                ctrs.get(token).enabled();
+            if (!pbqs.offer(tc, 1, TimeUnit.SECONDS)) {
+                logger.warn(
+                        "Offer connector failed ,the queue is full..."
+                );
+            }
         }
-    }
-
-    /**
-     * 根据传递的 ThriftConnection 生成一个 key 作为 map 的 key
-     *
-     * @param tc
-     * @return
-     */
-    private String buildKey(URL tc) {
-        return tc.getHost() + tc.getPort() + tc.getVersion() + tc.getClusterName();
     }
 
     /**
@@ -270,17 +291,33 @@ public class NodeManager extends ZKModule {
      */
     public void deleteProvider(String path) {
         URL tc = URLBuilder.Builder(URLBuilder.RPCType.Thrift).deBuild(path);
-        String group = StringUtil.isEmpty(tc.getGroup()) ? DEFAULT_GROUP : tc.getGroup();
+        String group = tc.getGroup();
         String token = tc.getToken();
         if (connections.containsKey(group)) {
-            ConcurrentHashMap<String, Connector> connectorGroup = connections
+            Map<String, Connector> connectorGroup = connections
                     .get(group);
             if (connectorGroup.containsKey(token)) {
                 Connector connector = connectorGroup.get(token);
-                logger.info("Update provider [{}]", tc);
                 connector.disabled();
+                if (connectors.containsKey(group))
+                    if (connectors.get(group).contains(connector))
+                        connections.remove(connector);
             }
         }
+//        URL tc = URLBuilder.Builder(URLBuilder.RPCType.Thrift).deBuild(path);
+//        String group = StringUtil.isEmpty(tc.getGroup()) ? DEFAULT_GROUP : tc.getGroup();
+//        String token = tc.getToken();
+//        if (connections.containsKey(group)) {
+//            ConcurrentHashMap<String, Connector> connectorGroup = connections
+//                    .get(group);
+//            if (connectorGroup.containsKey(token)) {
+//                Connector connector = connectorGroup.get(token);
+//                logger.info("Update provider [{}]", tc);
+//                connector.disabled();
+//                hashNodeRing.delNode(connector);
+//            }
+//
+//        }
     }
 
     /**
@@ -294,7 +331,7 @@ public class NodeManager extends ZKModule {
         if (this.connections.containsKey(group)) {
             //TODO 不能用队列的方式来做,因为每台机器不可能只处理一件事,应该根据对于的服务器状态处理
             if (StringUtil.isEmpty(group)) group = DEFAULT_GROUP;
-            Selector selector = hashNodeRing.select(group, version, name);
+            SelectorResult selector = hashNodeRing.select(group, version, name);
             connector = selector.getConnector();
             //检查通过首次筛选出来的机器。
             if (!checkAvailableProvider(connector)) {
@@ -339,7 +376,9 @@ public class NodeManager extends ZKModule {
         }
     }
 
-    public Connector getAvailableProvider(String group, int i, TimeUnit minutes, boolean b) {
-        return null;
+    public Connector getAvailableProvider(String group, int timeout, TimeUnit unit, boolean isTiming) throws InterruptedException {
+        if (!connectors.containsKey(group))
+            connectors.put(group, new PriorityBlockingQueue<>());
+        return connectors.get(group).poll(timeout, unit);
     }
 }
