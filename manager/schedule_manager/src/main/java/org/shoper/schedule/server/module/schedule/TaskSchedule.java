@@ -173,7 +173,6 @@ public class TaskSchedule
 									+ taskAndConnector.thriftConnector
 											.getUrl().getID()
 									+ "]...",
-
 							e);
 			TaskTrack.takeFaildTaskAndRemove(
 					taskAndConnector.thriftConnector.getUrl()
@@ -187,7 +186,6 @@ public class TaskSchedule
 							.getID());
 		} catch (InterruptedException e1)
 		{
-			;
 		}
 	}
 
@@ -213,7 +211,7 @@ public class TaskSchedule
 			String group = taskService.getTaskGroup(task.getTemplateID());
 			// 未获取到数据,休眠...等待 task pool 获取到新的 task
 			Connector connector = providerManager
-					.getAvailableProvider(group, 3, TimeUnit.MINUTES, false);
+					.getAvailableProvider(group,  3, TimeUnit.MINUTES, false);
 			if (connector == null)
 			{
 				taskAndConnector.status = 2;

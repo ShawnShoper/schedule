@@ -16,7 +16,7 @@ public class ZKClient_test
 	public static void main(String[] args)
 			throws KeeperException, InterruptedException
 	{
-		ZKClient zkClient = new ZKClient("192.168.2.128", 2181, 50000,
+		ZKClient zkClient = new ZKClient("192.168.2.4", 2181, 50000,
 				new MyWatch());
 		zkClient.createNode("/org", CreateMode.PERSISTENT);
 		zkClient.createNode("/org/config", CreateMode.PERSISTENT);
@@ -30,8 +30,8 @@ public class ZKClient_test
 		zkClient.createNode("/org/config/mail", CreateMode.PERSISTENT);
 		{
 			RedisInfo redisInfo = new RedisInfo();
-			redisInfo.setHost("192.168.100.45");
-			redisInfo.setPassword("daqsoft");
+			redisInfo.setHost("192.168.2.4");
+			redisInfo.setPassword("shawnshoper");
 			redisInfo.setPort(6379);
 			redisInfo.setTimeout(10000);
 			zkClient.editData("/org/config/redis", redisInfo.toJson());
@@ -39,7 +39,7 @@ public class ZKClient_test
 		{
 			MongoInfo mongoInfo = new MongoInfo();
 			mongoInfo.setDbName("org");
-			mongoInfo.setServerAddress("192.168.100.45:27017");
+			mongoInfo.setServerAddress("192.168.2.4:27017");
 			mongoInfo.setTimeout(20000);
 			zkClient.editData("/org/config/mongo", mongoInfo.toJson());
 		}

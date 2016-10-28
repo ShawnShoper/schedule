@@ -108,6 +108,7 @@ public class Registrar extends ZKModule {
 		tc.setGroup(appInfo.getName());
 		tc.setHost(appInfo.getBindAddr());
 		tc.setPort(appInfo.getPort());
+		tc.setClusterName(ReportServer.class.getName());
 		tc.setClassName(ReportServer.class.getName());
 		tc.setTimeout(tc.getTimeout());
 		tc.setUnit(TimeUnit.SECONDS);

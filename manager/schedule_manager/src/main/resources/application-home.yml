@@ -24,7 +24,7 @@ application:
     #mongoPath:  /org/shoper/schedule/config/mongo
     redisPath:  /org/config/redis
     #redisPath:  /org/shoper/schedule/config/redis
-    bindAddr: 192.168.1.7
+    bindAddr: 192.168.2.4
 provider:
     nodePath: /org/provider
     #nodePath: /org/shoper/schedule/provider

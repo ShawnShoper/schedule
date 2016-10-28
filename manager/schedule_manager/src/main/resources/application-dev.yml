@@ -17,10 +17,9 @@ application:
     name: schedule_server
     heartBeat:  5000
     timeout:  5
-    port: 8887
-    taskGenerateInterval: 1
+ø    taskGenerateInterval: 1
     generateIntervalUnit: HOURS
-    bindAddr: 192.168.2.238
+    bindAddr: 192.168.2.217
 provider:
     nodePath: /org/provider
     #nodePath: /org/shoper/schedule/provider

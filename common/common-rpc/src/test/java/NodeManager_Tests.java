@@ -1,8 +1,8 @@
 import org.junit.Test;
 import org.shoper.common.rpc.common.URL;
 import org.shoper.common.rpc.connector.Connector;
-import org.shoper.common.rpc.manager.selector.HashNodeRing;
-import org.shoper.common.rpc.manager.selector.Selector;
+import org.shoper.common.rpc.manager.selector.HashNodeRingSelector;
+import org.shoper.common.rpc.manager.selector.SelectorResult;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import static org.shoper.common.rpc.connector.Connector.buider;
  * @sice
  */
 public class NodeManager_Tests {
-    HashNodeRing nodeManager = new HashNodeRing();
+    HashNodeRingSelector nodeManager = new HashNodeRingSelector();
 
     @Test
     public void HashNodeRing() throws InterruptedException, IOException {
@@ -124,7 +124,7 @@ public class NodeManager_Tests {
         {
             Map<Object, AtomicInteger> result = new HashMap<>();
             IntStream.iterate(0, n -> ++n).limit(1000000).mapToObj(n -> {
-                Selector selector = nodeManager.select("DEFAULT_GROUP", "1.2.0", "test");
+                SelectorResult selector = nodeManager.select("DEFAULT_GROUP", "1.2.0", "test");
                 if (Objects.isNull(selector)) return null;
                 return selector.getConnector().getUrl().getHost();
             }).forEach(j -> {
